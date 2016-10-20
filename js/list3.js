@@ -86,15 +86,15 @@ class list3 extends React.Component {
   }
 
   _handlePanResponderEnd(e: Object, gestureState: Object) {
-		// if (gestureState.dx > 0) { // 下拉
-		// 	this._close();
-		// } else { // 上拉
-		// 	this._pressHandle();
-		// }
+		if (gestureState.dx > 0) { // 下拉
+			this._close();
+		} else { // 上拉
+			this._pressHandle();
+		}
   }
 
 	_pressHandle(rowID: number) {
-		console.log('_pressHandle==' + rowID);
+		console.log('_pressHanfasfasfasdle==' + rowID);
 		LayoutAnimation.linear();
 		let num = 30;
 		if (this.state.isOpen === false) {
