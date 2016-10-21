@@ -132,9 +132,10 @@ class list3 extends React.Component {
 		})
 	}
 
+
 	_renderRow(rowData: string, sectionID: number, rowID: number) {
 		return (
-			<View style={[styles.container]}>
+			<View style={[styles.container, { width: Dimensions.get('window').width}]}>
 				<View style={[styles.back, {width: this.state.backFrame.w, height:this.state.backFrame.h, top: this.state.backFrame.t, marginLeft: this.state.backMarginLeft}]}>
 					<TouchableHighlight onPress={ this._pressHandle.bind(this, rowID)} >
 						<View style={[styles.front, {width: this.state.frontFrame.w, height:this.state.frontFrame.h, top: this.state.frontFrame.t, marginLeft: this.state.frontFrame.mr}]}
@@ -154,6 +155,7 @@ class list3 extends React.Component {
 		return (
 			<ListView
 				horizontal={true}
+				pagingEnabled={true}
 				scrollEnabled={this.state.isScrollEnabled}
 				dataSource={this.state.dataSource}
 				renderRow={this._renderRow.bind(this)}
@@ -171,6 +173,7 @@ const styles = StyleSheet.create({
 	},
 	front: {
 		backgroundColor: 'red',
+		alignItems: 'flex-end'
 
 	},
 	back: {
