@@ -42,6 +42,9 @@ class Button extends React.Component {
   }
 }
 
+var myMap = new Map();
+const NUM = 30;
+
 class list3 extends React.Component {
 
 	constructor() {
@@ -50,6 +53,7 @@ class list3 extends React.Component {
 		const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 		this.state = {
 			dataSource: ds.cloneWithRows(['row 1', 'row 2','row 3','row 4', 'row 5','row 6']),
+			expandingFlag: 0,
 			isOpen: false,
 			backFrame: {t: 0, w: 214, h: 264},
 			frontFrame: {t: 0, w: 214, h: 264, mr: 0},
@@ -95,59 +99,127 @@ class list3 extends React.Component {
 
 	_pressHandle(rowID: number) {
 		console.log('_pressHanfasfasfasdle==' + rowID);
+
 		LayoutAnimation.linear();
 		let num = 30;
 		if (this.state.isOpen === false) {
-			console.log('_pressHandle==false');
+			myMap.set(rowID, 1)
+			console.log('_pressHandle==false++'+ myMap.get(rowID));
 			this.setState ({
-				isOpen: true,
-				frontFrame: {t: this.state.frontFrame.t - num, w: this.state.frontFrame.w, h: this.state.frontFrame.h, mr: num/2},
-				backFrame: {t: 0, w: this.state.backFrame.w + num, h: this.state.backFrame.h + num},
+				expandingFlag: 1,
 				isScrollEnabled: true
 			})
 		} else {
-			console.log('_pressHandle==true');
+			myMap.set(rowID, 2)
+			console.log('_pressHandle==true++'+ myMap.get(rowID));
 			this.setState ({
-				backFrame: {t: 120, w: Dimensions.get('window').width, h: Dimensions.get('window').height},
-				frontFrame: {t: -120, w: Dimensions.get('window').width, h: 120, mr: 0},
-				backMarginLeft: 0,
-				isScrollEnabled: false,
+				expandingFlag: 2,
+				isScrollEnabled: true,
 			})
 		}
 	}
 
-	_close() {
+	_close(rowID) {
 		LayoutAnimation.linear();
+		myMap.set(rowID, 0)
 		let num = 0;
 		if (this.state.frontFrame.t === -120) {
 			num = 30;
 		}
 
 		this.setState ({
+			expandingFlag: 0,
 			isOpen: num > 0? true : false,
-			frontFrame: {t: -num, w: 214, h: 264, mr: num * 0.5},
-			backFrame: {t: 0, w: 214 + num, h: 264 + num},
-			backMarginLeft: 20,
 			isScrollEnabled: true
 		})
 	}
 
+	getBackViewStyle(rowID) {
+		let expandingFlag = myMap.get(rowID);
+		if (this.state.expandingFlag === expandingFlag) {
+			return [
+				styles.back,
+				{
+					top: 0,
+					width: 214 + NUM,
+					height: 264 + NUM,
+					marginLeft: 0,
+				}
+			]
+		} else if (this.state.expandingFlag === expandingFlag) {
+			return [
+				styles.back,
+				{
+					top: 120,
+					width: Dimensions.get('window').width,
+					height: Dimensions.get('window').height - 120,
+					marginLeft: 20
+				}
+			]
+		} else {
+			return [
+				styles.back,
+				{
+					top: 0,
+					width: 214,
+					height: 264,
+					marginLeft: 20
+				}
+			]
+		}
+	}
+
+	getFrontViewStyle(rowID) {
+
+		let expandingFlag = myMap.get(rowID);
+		console.log("getFrontViewStyle+++" + rowID);
+		if (this.state.expandingFlag === expandingFlag) {
+			return [
+				styles.front,
+				{
+					top: -NUM,
+					width: 214,
+					height: 264,
+				}
+			]
+		} else if (this.state.expandingFlag === expandingFlag) {
+			return [
+				styles.front,
+				{
+					top: -120,
+					width: Dimensions.get('window').width,
+					height: 120,
+				}
+			]
+		} else {
+			return [
+				styles.front,
+				{
+					top: 0,
+					width: 214,
+					height: 264,
+				}
+			]
+		}
+	}
 
 	_renderRow(rowData: string, sectionID: number, rowID: number) {
+		console.log("_renderRow=" + rowID);
 		return (
 			<View style={[styles.container, { width: Dimensions.get('window').width}]}>
-				<View style={[styles.back, {width: this.state.backFrame.w, height:this.state.backFrame.h, top: this.state.backFrame.t, marginLeft: this.state.backMarginLeft}]}>
-					<TouchableHighlight onPress={ this._pressHandle.bind(this, rowID)} >
-						<View style={[styles.front, {width: this.state.frontFrame.w, height:this.state.frontFrame.h, top: this.state.frontFrame.t, marginLeft: this.state.frontFrame.mr}]}
-							// {...this._panResponder.panHandlers}
-						>
-							<Button onPress={ this._close.bind(this)} style={styles.closeButton}>
-								Close
-							</Button>
-						</View>
-					</TouchableHighlight>
+					<View style={this.getBackViewStyle(rowID)}>
+						<TouchableHighlight onPress={ this._pressHandle.bind(this, rowID)} >
+							<View style={this.getFrontViewStyle(rowID)}
+								// {...this._panResponder.panHandlers}
+							>
+							<Text>{rowID}</Text>
+								<Button onPress={ this._close.bind(this, rowID)} style={styles.closeButton}>
+									Close
+								</Button>
+							</View>
+						</TouchableHighlight>
+					</View>
 				</View>
-			</View>
 		)
 	}
 
