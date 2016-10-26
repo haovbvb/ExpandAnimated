@@ -11,11 +11,9 @@ import {
 	Dimensions,
 	PanResponder,
 	ScrollView,
-	TouchableOpacity,
-	Image
+	TouchableOpacity
 } from 'react-native';
 
-let Itmes = require('./feed/mocks.js');
 
 class Button extends React.Component {
   state = {
@@ -40,19 +38,18 @@ class Button extends React.Component {
         onPress={this.props.onPress}
         onShowUnderlay={this._onHighlight}
         style={[styles.button, this.props.style]}
-        underlayColor="transparent">
+        underlayColor="#a9d9d4">
           <Text style={[styles.buttonText, colorStyle]}>{this.props.children}</Text>
       </TouchableHighlight>
     );
   }
 }
 
-var dataList = ['../images/pic1.png', '../images/pic2.png','../images/pic3.png','../images/pic4.png','../images/pic5.png'];
+var dataList = ['row 1', 'row 2','row 3','row 4','row 5'];
 var myMap = new Map();
 const NUM = 30;
-const DEFAULT_WIDTH = 214;
-const DEFAULT_HEIGHT= 264;
-const EXPANDING_HEIGHT = 150;
+const defaultWidth = 214;
+const defaultHeight = 264;
 
 class list3 extends React.Component {
 
@@ -65,9 +62,7 @@ class list3 extends React.Component {
 			isScrollEnabled: true,
 			stateDict: myMap,
 			currentIndex: 0,
-			theWidth: 100,
-			totalHorizontalPages: 0,
-      currentHorizontalPage: null,
+			theWidth: 100
 		}
 
 		this._panResponder = PanResponder.create({
@@ -91,19 +86,18 @@ class list3 extends React.Component {
 
   _handlePanResponderMove(e: Object, gestureState: Object) {
 		console.log("_handlePanResponderMove[" + gestureState.dy + "]" );
-		// if (gestureState.dx > 0) { // 下拉
-		// 	this._close(0);
-		// } else { // 上拉
-		// 	this._pressHandle(0);
-		// }
+		if (gestureState.dx > 0) { // 下拉
+			this._close();
+		} else { // 上拉
+			this._pressHandle();
+		}
   }
 
   _handlePanResponderEnd(e: Object, gestureState: Object) {
-		console.log("_handlePanResponderEnd++" + e);
 		if (gestureState.dx > 0) { // 下拉
-			this._close(this.state.currentHorizontalPage - 1);
+			this._close();
 		} else { // 上拉
-			this._pressHandle(this.state.currentHorizontalPage - 1);
+			this._pressHandle();
 		}
   }
 
@@ -158,8 +152,8 @@ class list3 extends React.Component {
 				styles.back,
 				{
 					top: 0,
-					width: DEFAULT_WIDTH + NUM ,
-					height: DEFAULT_HEIGHT + NUM,
+					width: defaultWidth + NUM ,
+					height: defaultHeight + NUM,
 					marginLeft: 0,
 				}
 			]
@@ -167,7 +161,7 @@ class list3 extends React.Component {
 			return [
 				styles.back,
 				{
-					top: EXPANDING_HEIGHT,
+					top: 120,
 					width: Dimensions.get('window').width,
 					height: Dimensions.get('window').height,
 					marginLeft: 0
@@ -178,8 +172,8 @@ class list3 extends React.Component {
 				styles.back,
 				{
 					top: 0,
-					width: DEFAULT_WIDTH,
-					height: DEFAULT_HEIGHT,
+					width: defaultWidth,
+					height: defaultHeight,
 					marginLeft: 20
 				}
 			]
@@ -197,8 +191,8 @@ class list3 extends React.Component {
 				styles.front,
 				{
 					top: -NUM,
-					width: DEFAULT_WIDTH,
-					height: DEFAULT_HEIGHT,
+					width: defaultWidth,
+					height: defaultHeight,
 					marginLeft: NUM/2
 				}
 			]
@@ -207,9 +201,9 @@ class list3 extends React.Component {
 			return [
 				styles.front,
 				{
-					top: -EXPANDING_HEIGHT,
+					top: -120,
 					width: Dimensions.get('window').width,
-					height: EXPANDING_HEIGHT,
+					height: 120,
 				}
 			]
 		} else {
@@ -218,36 +212,10 @@ class list3 extends React.Component {
 				styles.front,
 				{
 					top: 0,
-					width: DEFAULT_WIDTH,
-					height: DEFAULT_HEIGHT,
+					width: defaultWidth,
+					height: defaultHeight,
 				}
 			]
-		}
-	}
-
-	getFrontBgViewStyle(rowID) {
-
-		// for (var [key, value] of myMap) {
-		//   console.log(key + " = " + value);
-		// }
-		if (this.state.stateDict.get(rowID) === 1) {
-			// 1.展开
-			return {
-				width: DEFAULT_WIDTH,
-				height: DEFAULT_HEIGHT,
-			}
-		} else if (this.state.stateDict.get(rowID) === 2) {
-			// 2.全展开
-			return {
-				width: Dimensions.get('window').width,
-				height: EXPANDING_HEIGHT,
-			}
-		} else {
-			// 0.关闭
-			return {
-				width: DEFAULT_WIDTH,
-				height: DEFAULT_HEIGHT,
-			}
 		}
 	}
 
@@ -285,88 +253,70 @@ class list3 extends React.Component {
 		}
 	}
 
-	makeItems(items: Array) {
-    // var items = ['../images/pic1.png', '../images/pic2.png','../images/pic3.png','../images/pic4.png','../images/pic5.png'];
-    for (var i = 0; i < items.length; i++) {
-       items[i] = (
-				 <View style={styles.container} key={i}>
-	 					<View style={this.getBackViewStyle(i)}>
-	 						<TouchableHighlight onPress={ this._pressHandle.bind(this, i)} underlayColor={'transparent'}>
-							<View style={this.getFrontViewStyle(i)}
+	_renderRow(rowData: string, sectionID: number, rowID: number) {
+		return (
+			<View style={styles.container} >
+					<View style={this.getBackViewStyle(rowID)}>
+						<TouchableHighlight onPress={ this._pressHandle.bind(this, rowID)} >
+							<View style={this.getFrontViewStyle(rowID)}
 								// {...this._panResponder.panHandlers}
 							>
-									<Image source={require('../images/pic1.png')} style={this.getFrontBgViewStyle(i)} key={i}>
-										<View>
-											<Text>{i}</Text>
-											<Button onPress={ this._close.bind(this, i)} style={styles.closeButton}>
-												Close
-											</Button>
-										</View>
-									</Image>
-								</View>
-	 						</TouchableHighlight>
-	 					</View>
-	 			</View>
+							<Text>{rowID}</Text>
+								<Button onPress={ this._close.bind(this, rowID)} style={styles.closeButton}>
+									Close
+								</Button>
+							</View>
+						</TouchableHighlight>
+					</View>
+				</View>
+		)
+	}
+
+	handleScroll() {
+		return (
+			<View style={[styles.container, {marginLeft: 0 * Dimensions.get('window').width}]} >
+					<View style={this.getBackViewStyle(0)}>
+						<TouchableHighlight onPress={ this._pressHandle.bind(this, 0)} >
+							<View style={this.getFrontViewStyle(0)}
+								// {...this._panResponder.panHandlers}
+							>
+							<Text>324</Text>
+								<Button onPress={ this._close.bind(this, 0)} style={styles.closeButton}>
+									Close
+								</Button>
+							</View>
+						</TouchableHighlight>
+					</View>
+			</View>
+		)
+	}
+
+	makeItems(nItems: number) {
+    var items = [];
+    for (var i = 0; i < nItems; i++) {
+       items[i] = (
+         <TouchableOpacity key={i}>
+           <Text>{'Item ' + i}</Text>
+         </TouchableOpacity>
        );
     }
     return items;
-  }
-
-	_handleScroll (event) {
-    // Still trigger the passed callback, if provided:
-    this.props.onScroll && this.props.onScroll(event);
-
-    var e = event.nativeEvent;
-
-    // Get values from event:
-    this.scrollViewWidth = e.layoutMeasurement.width;
-    this.scrollViewHeight = e.layoutMeasurement.height;
-    this.innerScrollViewWidth = e.contentSize.width;
-    this.innerScrollViewHeight = e.contentSize.height;
-
-    // These are important, but they're not state variables that trigger an update:
-    this.scrollX = e.contentOffset.x;
-    this.scrollY = e.contentOffset.y;
-
-    var totalHorizontalPages = Math.floor(this.innerScrollViewWidth / this.scrollViewWidth + 0.5);
-    var totalVerticalPages = Math.floor(this.innerScrollViewHeight / this.scrollViewHeight + 0.5);
-
-    this.setState({
-      totalHorizontalPages: totalHorizontalPages,
-      currentHorizontalPage: Math.min(Math.max(Math.floor(this.scrollX / this.scrollViewWidth + 0.5) + 1, 0), totalHorizontalPages),
-    });
-		console.log("_handleScroll ++" + this.state.currentHorizontalPage);
-  }
-
-	_handleContentSizeChange (width, height) {
-    this.props.onContentSizeChange && this.props.onContentSizeChange(width, height);
-
-    // Get values from event:
-    this.innerScrollViewWidth = width;
-    this.innerScrollViewHeight = height;
-
-    var totalHorizontalPages = Math.max(1, Math.floor(this.innerScrollViewWidth / this.scrollViewWidth + 0.5));
-    var totalVerticalPages = Math.max(1, Math.floor(this.innerScrollViewHeight / this.scrollViewHeight + 0.5));
-
-    this.setState({
-      totalHorizontalPages: totalHorizontalPages,
-      currentHorizontalPage: Math.min(Math.max(Math.floor(this.scrollX / this.scrollViewWidth + 0.5) + 1, 0), totalHorizontalPages),
-    });
-
-  }
-
+  };
 	render() {
 		return (
+			// <ListView
+			// 	horizontal={true}
+			// 	pagingEnabled={true}
+			// 	scrollEnabled={this.state.isScrollEnabled}
+			// 	dataSource={this.state.dataSource}
+			// 	renderRow={this._renderRow.bind(this)}
+			// />
 
-				<ScrollView
-	          horizontal={true}
-						pagingEnabled={true}
-	          style={styles.scrollView}
-						onScroll={this._handleScroll.bind(this)}
-						onContentSizeChange={this._handleContentSizeChange.bind(this)}
-				>
-						{this.makeItems(Itmes)}
-	      </ScrollView>
+			<ScrollView
+          horizontal={true}
+          style={styles.scrollView}>
+					{this.makeItems(200)}
+      </ScrollView>
 
 		)
 	}
@@ -380,10 +330,10 @@ const styles = StyleSheet.create({
 		backgroundColor: 'transparent',
 		width: Dimensions.get('window').width,
 	},
-
 	front: {
-		// backgroundColor: 'red',
+		backgroundColor: 'red',
 		alignItems: 'flex-end'
+
 	},
 	back: {
 		backgroundColor: 'blue',
@@ -394,7 +344,7 @@ const styles = StyleSheet.create({
 		alignItems: 'flex-end',
 	},
 	scrollView: {
-
+		width: 20000//dataList.length * Dimensions.get('window').width
 	}
 
 });

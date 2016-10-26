@@ -8,7 +8,7 @@ let App2 = require('./js/scrollView.js')
 export default class ExpandAnimated extends Component {
   render() {
     return (
-      <App2 />
+      <App />
     );
   }
 }
