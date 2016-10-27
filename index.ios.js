@@ -2,13 +2,15 @@
 import React, { Component } from 'react';
 import { AppRegistry } from 'react-native';
 
-let App = require('./js/list3')
+let App3 = require('./js/list3')
 let App2 = require('./js/scrollView.js')
+let App = require('./js/list')
+let Pan = require('./js/pan')
 
 export default class ExpandAnimated extends Component {
   render() {
     return (
-      <App />
+      <Pan />
     );
   }
 }

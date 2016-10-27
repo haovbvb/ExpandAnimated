@@ -68,6 +68,7 @@ class list3 extends React.Component {
 			theWidth: 100,
 			totalHorizontalPages: 0,
       currentHorizontalPage: null,
+			frontTop: 0
 		}
 
 		this._panResponder = PanResponder.create({
@@ -90,21 +91,32 @@ class list3 extends React.Component {
   }
 
   _handlePanResponderMove(e: Object, gestureState: Object) {
-		console.log("_handlePanResponderMove[" + gestureState.dy + "]" );
-		// if (gestureState.dx > 0) { // 下拉
-		// 	this._close(0);
-		// } else { // 上拉
-		// 	this._pressHandle(0);
-		// }
+		console.log("_handlePanResponderMove[" + gestureState.dx + "]" + "[" + gestureState.dy +"]" );
+		console.log("page number ++" + this.state.currentHorizontalPage);
+		if (gestureState.dx > 0) { // 下拉dx
+			let stop = false;
+			// if (gestureState.dy > 30) {
+			// 	stop = true;
+			// 	return;
+			// }
+			this._close(this.state.currentHorizontalPage);
+		} else { // 上拉
+			// this._pressHandle(0);
+			if (gestureState.dy < -30) {
+				return
+			}
+			this._pressHandle(this.state.currentHorizontalPage);
+		}
+
   }
 
   _handlePanResponderEnd(e: Object, gestureState: Object) {
 		console.log("_handlePanResponderEnd++" + e);
-		if (gestureState.dx > 0) { // 下拉
-			this._close(this.state.currentHorizontalPage - 1);
-		} else { // 上拉
-			this._pressHandle(this.state.currentHorizontalPage - 1);
-		}
+		// if (gestureState.dx > 0) { // 下拉
+		// 	this._close(this.state.currentHorizontalPage - 1);
+		// } else { // 上拉
+		// 	this._pressHandle(this.state.currentHorizontalPage - 1);
+		// }
   }
 
 	_pressHandle(rowID: number) {
@@ -196,7 +208,7 @@ class list3 extends React.Component {
 			return [
 				styles.front,
 				{
-					top: -NUM,
+					top: -this.state.frontTop,//-NUM,
 					width: DEFAULT_WIDTH,
 					height: DEFAULT_HEIGHT,
 					marginLeft: NUM/2
@@ -287,13 +299,14 @@ class list3 extends React.Component {
 
 	makeItems(items: Array) {
     // var items = ['../images/pic1.png', '../images/pic2.png','../images/pic3.png','../images/pic4.png','../images/pic5.png'];
+		//onPress={ this._pressHandle.bind(this, i)}
     for (var i = 0; i < items.length; i++) {
        items[i] = (
 				 <View style={styles.container} key={i}>
 	 					<View style={this.getBackViewStyle(i)}>
-	 						<TouchableHighlight onPress={ this._pressHandle.bind(this, i)} underlayColor={'transparent'}>
+	 						<TouchableHighlight  underlayColor={'transparent'}>
 							<View style={this.getFrontViewStyle(i)}
-								// {...this._panResponder.panHandlers}
+								{...this._panResponder.panHandlers}
 							>
 									<Image source={require('../images/pic1.png')} style={this.getFrontBgViewStyle(i)} key={i}>
 										<View>
