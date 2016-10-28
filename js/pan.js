@@ -19,7 +19,8 @@ class pan extends Component {
 	constructor() {
 		super();
 		this.state = {
-			pan: new Animated.ValueXY(),
+			pan: new Animated.ValueXY(0),
+			top: 0
 		}
 
 		this._panResponder = PanResponder.create({
@@ -29,6 +30,13 @@ class pan extends Component {
       onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
       onPanResponderGrant: () => {},
       onPanResponderMove: Animated.event([null, {dx: this.state.pan.x, dy: this.state.pan.y}]),
+			onPanResponderRelease: this._handlePanResponderRelease.bind(this)
+		})
+	}
+
+	_handlePanResponderRelease(e: Object, gestureState: Object) {
+		this.setState({
+			top: this.state.top += gestureState.dy
 		})
 	}
 
@@ -37,12 +45,13 @@ class pan extends Component {
 			width: 50,
 			height: 50,
 			backgroundColor: 'blue',
+			top: this.state.top,
 			transform: [
 				{
-            translateX: 0
+          translateY: this.state.pan.y
         },
         {
-          translateY: 8
+          translateY: this.state.pan.y
         }
 			]
 		}
@@ -50,8 +59,10 @@ class pan extends Component {
 
 	render() {
 		return (
-			<View style={ this.theStyle()}>
-			</View>
+			<Animated.View style={ this.theStyle()}
+				{...this._panResponder.panHandlers}
+			>
+			</Animated.View>
 		)
 	}
 }

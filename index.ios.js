@@ -10,7 +10,7 @@ let Pan = require('./js/pan')
 export default class ExpandAnimated extends Component {
   render() {
     return (
-      <Pan />
+      <App3 />
     );
   }
 }

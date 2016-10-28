@@ -208,7 +208,7 @@ class list3 extends React.Component {
 			return [
 				styles.front,
 				{
-					top: -this.state.frontTop,//-NUM,
+					top: -NUM,
 					width: DEFAULT_WIDTH,
 					height: DEFAULT_HEIGHT,
 					marginLeft: NUM/2
@@ -304,9 +304,9 @@ class list3 extends React.Component {
        items[i] = (
 				 <View style={styles.container} key={i}>
 	 					<View style={this.getBackViewStyle(i)}>
-	 						<TouchableHighlight  underlayColor={'transparent'}>
+	 						<TouchableHighlight  underlayColor={'transparent'} onPress={ this._pressHandle.bind(this, i)}>
 							<View style={this.getFrontViewStyle(i)}
-								{...this._panResponder.panHandlers}
+								// {...this._panResponder.panHandlers}
 							>
 									<Image source={require('../images/pic1.png')} style={this.getFrontBgViewStyle(i)} key={i}>
 										<View>
@@ -340,9 +340,8 @@ class list3 extends React.Component {
     // These are important, but they're not state variables that trigger an update:
     this.scrollX = e.contentOffset.x;
     this.scrollY = e.contentOffset.y;
-
+		console.log("inner["+ this.innerScrollViewWidth + "][" + this.scrollViewWidth);
     var totalHorizontalPages = Math.floor(this.innerScrollViewWidth / this.scrollViewWidth + 0.5);
-    var totalVerticalPages = Math.floor(this.innerScrollViewHeight / this.scrollViewHeight + 0.5);
 
     this.setState({
       totalHorizontalPages: totalHorizontalPages,
